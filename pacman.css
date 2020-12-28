@@ -34,7 +34,11 @@ html, body
 }
 
 .gameboard div.pacman {
-  background-color: yellow
+  background-color: yellow;
+}
+
+.gameboard div.ghost {
+  background-color: white;
 }
 
 .score {
@@ -46,3 +50,18 @@ html, body
   color:#fff;
 }
 .score p {display: inline;}
+
+.lives {
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  color:#fff;
+}
+.lives div {
+  display: inline-block;
+  background-color:yellow;
+  width:25px;
+  margin-left: 5px;
+  height:25px;}

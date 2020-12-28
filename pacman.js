@@ -4,29 +4,38 @@ window.addEventListener('load', () => {
   var width = 27
   var currentPacmanPos = 390
   var gameScore = 0
-  var pointsPerDot = 10
+  const POINTS_PER_DOT = 10
+  const TIME_GHOST_MODE = 1000 * 20 // in ms
+  var lives = 3
   var currentDirection = ''
+  var flagGodMode = false
+  // type of tiles
+  const GHOST = 7
+  const PACMAN = 2
+  const EMPTY = 9
+  const POINT = 0
+  const OBSTACLE = 1
 
   var GAME_SETUP = [
-    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -50,11 +59,20 @@ window.addEventListener('load', () => {
 
     function isMovable(pos, curr) {
       // cannot move into obstacle
-      if(GAME_SETUP[pos] === 1) {
+      if(hasObstacle(pos)) {
         return false
       }
       // cannot move into an undefined div elem
-      if(pos <= 0 || pos >= 811) {
+
+      if(GAME_SETUP[pos] === 7) {
+        // kill pacman or ghost
+        if(!flagGodMode) {
+          gameScore += 500
+          return true
+        }
+
+        // kill Pacman
+        killPacMan()
         return false
       }
 
@@ -63,6 +81,15 @@ window.addEventListener('load', () => {
         return false
       }
 
+      return true
+    }
+
+    function hasObstacle(pos) {
+      if(pos < 0 || pos >= 811) {
+        return true
+      }
+
+      if(GAME_SETUP[pos] === EMPTY || GAME_SETUP[pos] === POINT || GAME_SETUP[pos] === PACMAN) return false
       return true
     }
 
@@ -104,14 +131,12 @@ window.addEventListener('load', () => {
 
     function movePacman(pos) {
       if(GAME_SETUP[pos] == 0) { // addScore
-        gameScore += pointsPerDot
+        gameScore += POINTS_PER_DOT
         updateScore()
       }
-      GAME_SETUP[pos] = 2
-      GAME_SETUP[currentPacmanPos] = 9
+      GAME_SETUP[pos] = PACMAN
+      GAME_SETUP[currentPacmanPos] = EMPTY
       currentPacmanPos = pos
-      clearBoard()
-      renderBoard()
     }
 
     function updateScore () {
@@ -123,19 +148,41 @@ window.addEventListener('load', () => {
       gameboard.innerHTML = ""
     }
 
+    function moveGhosts () {
+      // find ghosts locations
+      ghosts = []
+      for(var i=0; i < GAME_SETUP.length; i++) {
+        if(GAME_SETUP[i] == GHOST) {
+          // move one tile
+          if(flagGodMode) { // move away from pacman
+            if(currentPacmanPos < i) { // move up or left
+              GAME_SETUP[i + 27] = GHOST
+            }
+          }
+          else
+          { // move towards him
+
+          }
+
+        }
+      }
+    }
+
     function renderBoard () {
       for(i = 0; i < (height * width); i++) {
         var div = document.createElement("div")
 
-        if(GAME_SETUP[i] == 0) {
+        if(GAME_SETUP[i] == POINT) {
           div.innerHTML = "&bullet;"
           // div.innerHTML = i
           div.setAttribute("class", "point-box")
-        } else if(GAME_SETUP[i] == 1) {
+        } else if(GAME_SETUP[i] == OBSTACLE) {
           div.setAttribute("class", "obstacle")
-        } else if(GAME_SETUP[i] == 2) { // pacman
+        } else if(GAME_SETUP[i] == PACMAN) { // pacman
           div.setAttribute("class", "pacman")
-        } else if(GAME_SETUP[i] == 9) { // empty tile
+        } else if(GAME_SETUP[i] == GHOST) { // ghost
+          div.setAttribute("class", "ghost")
+        } else if(GAME_SETUP[i] == EMPTY) { // empty tile
           div.setAttribute("class", "empty")
         }
 
@@ -144,6 +191,9 @@ window.addEventListener('load', () => {
     }
 
     setInterval(() => {
+      moveGhosts()
       if(currentDirection != '') eval(currentDirection + "()")
+      clearBoard()
+      renderBoard()
     }, 220)
 })
