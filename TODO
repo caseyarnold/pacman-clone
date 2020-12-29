@@ -1,0 +1,9 @@
+# TODO #
+-Implement ghosts
+  -> moveGhosts()
+  -> moveGhost()
+  -> "Invincible mode" where ghosts can be taken for points
+
+-Choose a better playing grid (i.e. better obstacles, position ghosts in better spots)
+-Reset game, game over board
+-Pause (?)
